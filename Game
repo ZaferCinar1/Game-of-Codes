@@ -1,0 +1,39 @@
+module Game(
+    input logic clk,
+    input logic start,
+    input logic reset,
+    input logic [3:0]keyb_col,
+    output logic [3:0]keyb_row,
+    output logic[3:0]phases,
+    output logic a, b, c, d, e, f, g,                  
+    output logic dp,
+    output logic [3:0]an
+    );
+    
+    logic [3:0]key_value;
+    logic [3:0]movement;
+    logic [1:0]direction;
+    logic [1:0]duration;
+    logic [3:0]compare;
+    logic key_valid;
+
+    logic [3:0]changedValue;
+    
+    keypad4X4 keypad( clk, keyb_row, keyb_col, key_value, key_valid);
+    
+    Mapper mapper( key_value, changedValue );
+    
+    RandomNumberGenerator random( reset, clk, movement );
+    
+    MemoryModule memory( clk , reset , key_valid, movement, compare );
+    
+    assign direction[0] = compare[3];
+    assign direction[1] = compare[1];
+    assign duration[0] = compare[2];
+    assign duration[1] = compare[0];
+    
+    steppermotor_wrapper stepper( clk, direction , duration , phases , start);
+    
+    Comparator comparator( clk, reset, key_valid, changedValue, compare, a, b, c, d, e, f, g, dp, an );
+
+endmodule
