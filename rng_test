@@ -1,0 +1,22 @@
+
+module rng_test();
+
+    logic reset, clk; 
+    bit [3:0]movement;
+
+	RandomNumberGenerator uut(reset, clk, movement);
+		
+    initial begin
+    #10;		
+       
+    clk = 1; #50;
+    reset = 0;
+    #50;
+    reset = 1; #50;
+    #300;
+    reset = 0; #50;
+    end
+
+    always #10 clk = ~clk;
+    
+endmodule
